@@ -70,19 +70,54 @@ In order to make these stepwise commands, we can create a pipeline into a two-st
 
 ## Writing a single-stage workflow that runs Samtools index on a BAM file
 
-```{markdown}
-```nextflow
-process foo {
+```
+genomics-1.nf
+/*
+ * Generate BAM index file
+ */
+process SAMTOOLS_INDEX {
+
+    container 'community.wave.seqera.io/library/samtools:1.20--b5dfbd93de237464'
+
+         // Save output files to the directory given by `params.outdir`
+        // Instead of copying, create symbolic links
+    publishDir params.outdir, mode: 'symlink'
+
     input:
-    path x
+        path input_bam
+
     output:
-    path "result.txt"
+        path "${input_bam}.bai"
+
     script:
     """
-    echo $x > result.txt
+    samtools index '$input_bam'
     """
 }
 ```
+
+Even though the data files we're using here are very small, in genomics they can get very large. For the purposes of demonstration in the teaching environment, we're using the 'symlink' publishing mode to avoid unnecessary file copies. You shouldn't do this in your final workflows, since you'll lose results when you clean up your work directory.
+
+Then we add the workflow at the end since we need to set up a channel to feed the input to the SAMTOOLS_INDEX process; then we can call the process itself to run on the contents of that channel.
+
+```
+workflow {
+
+    // Create input channel (single file via CLI parameter)
+    reads_ch = Channel.fromPath(params.reads_bam)
+
+    // Create index file for input BAM file
+    SAMTOOLS_INDEX(reads_ch)
+}
+
+```
+Then run using:
+
+```
+nextflow run genomics-1.nf
+```
+
+
 
 
 
