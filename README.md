@@ -22,16 +22,68 @@ docker run -it -v ./data:/data community.wave.seqera.io/library/samtools:1.20--b
 samtools index /data/bam/reads_mother.bam
 ```
 This process is fast, and immediately, BAM index files will be generated. 
+```
 data/bam/
     |-- reads_father.bam
     |-- reads_mother.bam
     |-- reads_mother.bam.bai
     \-- reads_son.bam
-
-
-
-
+```
 ## Exit the Samtools container
 ```
 exit 
 ```
+## Workflow: Call variants with GATK HaplotypeCaller
+
+Pull the GATK container
+```
+docker pull community.wave.seqera.io/library/gatk4:4.5.0.0--730ee8817e436867
+```
+Spin up the GATK container interactively
+```
+docker run -it -v ./data:/data community.wave.seqera.io/library/gatk4:4.5.0.0--730ee8817e436867
+```
+
+ Run the variant calling command
+We need to provide the BAM input file (-I) as well as the reference genome (-R), a name for the output file (-O) and a list of genomic intervals to analyze (-L).
+
+However, we don't need to specify the path to the index file; the tool will automatically look for it in the same directory, based on the established naming and co-location convention. The same applies to the reference genome's accessory files (index and sequence dictionary files, *.fai and *.dict).
+```
+gatk HaplotypeCaller \
+        -R /data/ref/ref.fasta \
+        -I /data/bam/reads_mother.bam \
+        -O reads_mother.vcf \
+        -L /data/ref/intervals.bed
+```
+
+The output file reads_mother.vcf is created inside your working directory in the container, so you won't see it in the VS Code file explorer unless you change the output file path. However, it's a small test file, so you can cat it to open it and view the contents. If you scroll all the way up to the start of the file, you'll find a header composed of many lines of metadata, followed by a list of variant calls, one per line.
+
+
+```
+exit
+```
+
+Where does NEXTFLOW fit into all of these?
+
+In order to make these stepwise commands, we can create a pipeline into a two-step workflow that uses containers to execute the work.
+
+
+## Writing a single-stage workflow that runs Samtools index on a BAM file
+
+```{markdown}
+```nextflow
+process foo {
+    input:
+    path x
+    output:
+    path "result.txt"
+    script:
+    """
+    echo $x > result.txt
+    """
+}
+```
+
+
+
+
