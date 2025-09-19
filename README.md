@@ -29,6 +29,7 @@ data/bam/
 └── reads_son.bam
 
 
+
 ## Exit the Samtools container
 ```
 exit 
