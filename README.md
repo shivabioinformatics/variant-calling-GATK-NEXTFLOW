@@ -63,38 +63,41 @@ The output file reads_mother.vcf is created inside your working directory in the
 exit
 ```
 
-Where does NEXTFLOW fit into all of these?
+---
+
+## Where does NEXTFLOW fit into all of these?
 
 In order to make these stepwise commands, we can create a pipeline into a two-step workflow that uses containers to execute the work.
 
 Nextflow:
-Resource: https://sateeshperi.github.io/nextflow_varcal/nextflow/nextflow_channels
+Resource: https://sateeshperi.github.io/nextflow_varcal/nextflow/nextflow_channels <br>
 
-Channels are how Nextflow handles file management, allowing complex tasks to be split up, run in parallel, and reduces ‘admin’ required to get the right inputs to the right parts of the pipeline.
+Channels are how Nextflow handles file management, allowing complex tasks to be split up, run in parallel, and reduces ‘admin’ required to get the right inputs to the right parts of the pipeline.<br>
 Channels connect processes via their inputs and outputs.
 Channels can store multiple items, such as files (e.g., fastq files) or values.
 The number of items a channel stores determines how many times a process will run using that channel as input. When the process runs using one item from the input channel, we will call that run a task.
 Channels are asynchronous, which means that output data from a set of processes will not necessarily be output in the same order as they went in.
 However, the first element into a queue is the first out of the queue (First in-First out). This allows processes to run as soon as they receive input from a channel. Channels only send data in one direction, from a producer (a process/operator), to a consumer (another process/operator).
 
-**Nextflow distinguishes between two different kinds of channels:**
-value channels
-queue channels
-Value channels
-A value channel is bound to a single value.
-A value channel can be used an unlimited number of times since its content is not consumed. This is also useful for processes that need to reuse input from a channel, for example, a reference genome sequence file that is required by multiple steps within a process, or by more than one process.
+**Nextflow distinguishes between two different kinds of channels:** <br>
+value channels<br>
+queue channels<br>
+Value channels<br>
+A value channel is bound to a single value.<br>
+A value channel can be used an unlimited number of times since its content is not consumed. This is also useful for processes that need to reuse input from a channel, for example, a reference genome sequence file that is required by multiple steps within a process, or by more than one process.<br>
 The value factory method is used to create a value channel. Values are put inside parentheses () to assign them to a channel.
 
+<br>
+Queue channel<br>
+Queue channels are a type of channel in which data is consumed (used up) to provide input for a process/operator.<br>
+Queue channels can be created in two ways:<br>
+As the outputs of a process.<br>
+A queue channel can be explicitly created using channel factory methods such as Channel.of or Channel.fromPath.<br>
 
-Queue channel
-Queue channels are a type of channel in which data is consumed (used up) to provide input for a process/operator.
-Queue channels can be created in two ways:
-As the outputs of a process.
-A queue channel can be explicitly created using channel factory methods such as Channel.of or Channel.fromPath.
-Queue channel factory
-Channel factories are used to explicitly create channels. Channel factories are called using the Channel.<method> syntax and return a specific instance of a Channel.
+**Queue channel factory** <br>
+Channel factories are used to explicitly create channels. Channel factories are called using the Channel.<method> syntax and return a specific instance of a Channel.<br>
 
-Queue (consumable) channels can be created using the following channel factory methods:
+Queue (consumable) channels can be created using the following channel factory methods:<br>
 
 Channel.of
 Channel.fromList
@@ -103,16 +106,16 @@ Channel.fromFilePairs
 Channel.fromSRA
 
 
-The **of** Channel factory
-When you want to create a channel containing multiple values, you can use the channel factory Channel.of.
-Channel.of allows the creation of a queue channel with the values specified as arguments, separated by a comma ,.
-You can specify a range of numbers as a single argument using the Groovy range operator ... This creates each value in the range (including the start and end values) as a value in the channel. The Groovy range operator can also produce ranges of dates, letters, or time. More information on the range operator can be found here.
+The **of** Channel factory <br>
+When you want to create a channel containing multiple values, you can use the channel factory Channel.of.<br>
+Channel.of allows the creation of a queue channel with the values specified as arguments, separated by a comma ,.<br>
+You can specify a range of numbers as a single argument using the Groovy range operator ... This creates each value in the range (including the start and end values) as a value in the channel. The Groovy range operator can also produce ranges of dates, letters, or time. More information on the range operator can be found here.<br>
 
-The **fromList** Channel factory
+The **fromList** Channel factory <br>
 You can use the Channel.fromList method to create a queue channel from a list object.
 Create a new file queue_list.nf; add the following and execute it using nextflow run queue_list.nf:
 
-**Processes**
+**Processes** <br>
 A process is the way Nextflow executes commands you would run on the command line or custom scripts.
 Processes can be thought of as particular tasks or steps in a workflow, e.g. an alignment step (bwa mem) in variant-calling analysis.
 Processes are independent of each other (don’t require another process to execute) and cannot communicate/write to each other.
@@ -122,6 +125,8 @@ In Nextflow, the process definition starts with the keyword process, followed by
 The process body must contain a string which represents the command or, more generally, a script that is executed by it.
 In order to run the process, we need to add it to a workflow block below the process.
 The workflow scope starts with the keyword workflow, followed by an optional name and finally the workflow body delimited by curly brackets {}.
+
+---
 
 ## Writing a single-stage workflow that runs Samtools index on a BAM file
 
