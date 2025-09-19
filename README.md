@@ -23,10 +23,11 @@ samtools index /data/bam/reads_mother.bam
 ```
 This process is fast, and immediately, BAM index files will be generated. 
 data/bam/
-├── reads_father.bam
-├── reads_mother.bam
-├── reads_mother.bam.bai
-└── reads_son.bam
+    |-- reads_father.bam
+    |-- reads_mother.bam
+    |-- reads_mother.bam.bai
+    \-- reads_son.bam
+
 
 
 
